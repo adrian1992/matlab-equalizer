@@ -22,7 +22,7 @@ function varargout = main_gui(varargin)
 
 % Edit the above text to modify the response to help main_gui
 
-% Last Modified by GUIDE v2.5 07-Nov-2014 12:49:44
+% Last Modified by GUIDE v2.5 25-Nov-2014 14:06:53
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -85,7 +85,6 @@ x = resample(dial,16,1)';
 L = length(x);
 N = 2^nextpow2(L);
 f = linspace(-fs/2,fs/2,N);
-nbits = nbits;
 
 
 % --- Executes on button press in pushbuttonm80.
@@ -107,8 +106,8 @@ function pushbuttonresetgains_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbuttonresetgains (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global defaultgainlowpass defaultgainbandpass1 defaultgainbandpass2 defaultgainbandpass3 defaultgainbandpass4 defaultgainhighpass;
-global gainlowpass gainbandpass1 gainbandpass2 gainbandpass3 gainbandpass4 gainhighpass;
+global defaultgainlowpass defaultgainbandpass1 defaultgainbandpass2 defaultgainbandpass3 defaultgainbandpass4 defaultgainbandpass5 defaultgainhighpass;
+global gainlowpass gainbandpass1 gainbandpass2 gainbandpass3 gainbandpass4 gainbandpass5 gainhighpass;
 gainlowpass = defaultgainlowpass;
 set(handles.sliderlowpass,'Value',gainlowpass);
 set(handles.textlowpass,'String',['Gain ' num2str(gainlowpass, 3) 'dB'])
@@ -124,8 +123,11 @@ set(handles.textbandpass3,'String',['Gain ' num2str(gainbandpass3, 3) 'dB'])
 gainbandpass4 = defaultgainbandpass4;
 set(handles.sliderbandpass4,'Value',gainbandpass4);
 set(handles.textbandpass4,'String',['Gain ' num2str(gainbandpass4, 3) 'dB'])
+gainbandpass5 = defaultgainbandpass5;
+set(handles.sliderbandpass4,'Value',gainbandpass5);
+set(handles.textbandpass4,'String',['Gain ' num2str(gainbandpass5, 3) 'dB'])
 gainhighpass = defaultgainhighpass;
-set(handles.sliderhighpass,'Value',gainhighpass);
+set(handles.sliderbandpass5,'Value',gainhighpass);
 set(handles.texthighpass,'String',['Gain ' num2str(gainhighpass, 3) 'dB'])
 
 % --- Executes on button press in pushbuttonsetdefault.
@@ -133,16 +135,18 @@ function pushbuttonsetdefault_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbuttonsetdefault (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global defaultgainlowpass defaultgainbandpass1 defaultgainbandpass2 defaultgainbandpass3 defaultgainbandpass4 defaultgainhighpass;
-global gainlowpass gainbandpass1 gainbandpass2 gainbandpass3 gainbandpass4 gainhighpass;
-global defaultfreqlowpass defaultfreqbandpass1 defaultfreqbandpass2 defaultfreqbandpass3 defaultfreqbandpass4 defaultfreqhighpass;
-global freqlowpass freqbandpass1 freqbandpass2 freqbandpass3 freqbandpass4 freqhighpass;
+global defaultgainlowpass defaultgainbandpass1 defaultgainbandpass2 defaultgainbandpass3 defaultgainbandpass4 defaultgainbandpass5 defaultgainhighpass;
+global gainlowpass gainbandpass1 gainbandpass2 gainbandpass3 gainbandpass4 gainbandpass5 gainhighpass;
 defaultgainlowpass = gainlowpass;
 defaultgainbandpass1 = gainbandpass1;
 defaultgainbandpass2 = gainbandpass2;
 defaultgainbandpass3 = gainbandpass3;
 defaultgainbandpass4 = gainbandpass4;
+defaultgainbandpass5 = gainbandpass5;
 defaultgainhighpass = gainhighpass;
+
+global defaultfreqlowpass defaultfreqbandpass1 defaultfreqbandpass2 defaultfreqbandpass3 defaultfreqbandpass4 defaultfreqhighpass;
+global freqlowpass freqbandpass1 freqbandpass2 freqbandpass3 freqbandpass4 freqhighpass;
 defaultfreqlowpass = freqlowpass;
 defaultfreqbandpass1 = freqbandpass1;
 defaultfreqbandpass2 = freqbandpass2;
@@ -159,11 +163,17 @@ function pushbuttonresetfreq_Callback(hObject, eventdata, handles)
 global defaultfreqlowpass defaultfreqbandpass1 defaultfreqbandpass2 defaultfreqbandpass3 defaultfreqbandpass4 defaultfreqhighpass;
 global freqlowpass freqbandpass1 freqbandpass2 freqbandpass3 freqbandpass4 freqhighpass;
 freqlowpass = defaultfreqlowpass;
+set(handles.editfreqlowpass,'Value',freqlowpass);
 freqbandpass1 = defaultfreqbandpass1;
+set(handles.editfreqbandpass1,'Value',freqbandpass1);
 freqbandpass2 = defaultfreqbandpass2;
+set(handles.editfreqbandpass2,'Value',freqbandpass2);
 freqbandpass3 = defaultfreqbandpass3;
+set(handles.editfreqbandpass3,'Value',freqbandpass3);
 freqbandpass4 = defaultfreqbandpass4;
+set(handles.editfreqbandpass4,'Value',freqbandpass4);
 freqhighpass = defaultfreqhighpass;
+set(handles.editfreqhighpass,'Value',freqhighpass);
 
 % --- Executes on button press in pushbuttonplayoriginal.
 function pushbuttonplayoriginal_Callback(hObject, eventdata, handles)
@@ -195,6 +205,9 @@ semilogy(handles.originalsignal,f,real(X));
 plot(handles.filter,f,Filter);
 semilogy(handles.equalizedsignal,f,real(X_eq));
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Edit Gains %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % --- Executes on slider movement.
 function sliderlowpass_Callback(hObject, eventdata, handles)
@@ -206,7 +219,7 @@ function sliderlowpass_Callback(hObject, eventdata, handles)
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
 global gainlowpass;
 gainlowpass = get(hObject,'Value');
-set(handles.textlowpass,'String',sprintf('Gain %d dB',gainlowpass))
+set(handles.textlowpass,'String',['Gain ' num2str(gainlowpass, 3) 'dB'])
 
 % --- Executes during object creation, after setting all properties.
 function sliderlowpass_CreateFcn(hObject, eventdata, handles)
@@ -335,8 +348,35 @@ gainbandpass4 = defaultgainbandpass4;
 
 
 % --- Executes on slider movement.
+function sliderbandpass5_Callback(hObject, eventdata, handles)
+% hObject    handle to sliderbandpass5 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+global gainbandpass5;
+gainbandpass5 = get(hObject,'Value');
+set(handles.textbandpass5,'String',['Gain ' num2str(gainbandpass5, 3) 'dB'])
+
+
+% --- Executes during object creation, after setting all properties.
+function sliderbandpass5_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to sliderbandpass5 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+global gainbandpass5 defaultgainbandpass5;
+defaultgainbandpass5 = 0;
+gainbandpass5 = defaultgainbandpass5;
+
+% --- Executes on slider movement.
 function sliderhighpass_Callback(hObject, eventdata, handles)
-% hObject    handle to sliderhighpass (see GCBO)
+% hObject    handle to sliderbandpass5 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -349,7 +389,7 @@ set(handles.texthighpass,'String',['Gain ' num2str(gainhighpass, 3) 'dB'])
 
 % --- Executes during object creation, after setting all properties.
 function sliderhighpass_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to sliderhighpass (see GCBO)
+% hObject    handle to sliderbandpass5 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -361,7 +401,9 @@ global gainhighpass defaultgainhighpass;
 defaultgainhighpass = 0;
 gainhighpass = defaultgainhighpass;
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Edit Frequency %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function editfreqlowpass_Callback(hObject, eventdata, handles)
 % hObject    handle to editfreqlowpass (see GCBO)
@@ -405,6 +447,7 @@ global freqbandpass1 freqlowpass freqbandpass2 defaultfreqbandpass1;
 freqbandpass1 = str2double(get(hObject,'String'));
 if(freqlowpass>freqbandpass1 || freqbandpass1>freqbandpass2)
     freqbandpass1=defaultfreqbandpass1;
+    set(handles.editfreqbandpass1,'Value',freqbandpass1);
 end
 
 % --- Executes during object creation, after setting all properties.
@@ -539,24 +582,28 @@ global defaultfreqhighpass freqhighpass;
 defaultfreqhighpass=str2double(get(hObject,'String'));
 freqhighpass=defaultfreqhighpass;
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Main Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 function equalize()
 global X N Filter X_eq x_eq x;
 X = fftshift(fft(x,N));
-create_filter();
+create_filter();    
 X_eq = X.*Filter;
-x_eq= ifft(ifftshift(X_eq));
+x_eq = ifft(ifftshift(X_eq));
 
 
 function create_filter()
-global N f;
-global Filter freqlowpass freqbandpass1 freqbandpass2 freqbandpass3 freqbandpass4 freqhighpass;
-global gainlowpass gainbandpass1 gainbandpass2 gainbandpass3 gainbandpass4 gainhighpass;
-    Filter = ones(1,N);
-    Filter(abs(f)<0 & abs(f)>freqlowpass) = 10^(gainlowpass/20);
-    Filter(abs(f)<freqlowpass & abs(f)>freqbandpass1) = 10^(gainbandpass1/20);
-    Filter(abs(f)<freqbandpass1 & abs(f)>freqbandpass2) = 10^(gainbandpass2/20);
-    Filter(abs(f)<freqbandpass2 & abs(f)>freqbandpass3) = 10^(gainbandpass3/20);
-    Filter(abs(f)<freqbandpass3 & abs(f)>freqbandpass4) = 10^(gainbandpass4/20);
-    Filter(abs(f)<freqbandpass4 & abs(f)>freqhighpass) = 10^(gainhighpass/20);
+global N f Filter;
+global freqlowpass freqbandpass1 freqbandpass2 freqbandpass3 freqbandpass4 freqhighpass;
+global gainlowpass gainbandpass1 gainbandpass2 gainbandpass3 gainbandpass4 gainbandpass5 gainhighpass;
+Filter = zeros(1,N);
+Filter(abs(f)<freqlowpass) = 10^(gainlowpass);
+Filter(abs(f)>freqlowpass & abs(f)<freqbandpass1) = 10^(gainbandpass1);
+Filter(abs(f)>freqbandpass1 & abs(f)<freqbandpass2) = 10^(gainbandpass2);
+Filter(abs(f)>freqbandpass2 & abs(f)<freqbandpass3) = 10^(gainbandpass3);
+Filter(abs(f)>freqbandpass3 & abs(f)<freqbandpass4) = 10^(gainbandpass4);
+Filter(abs(f)>freqbandpass4 & abs(f)<freqhighpass) = 10^(gainbandpass5);  
+Filter(abs(f)>freqhighpass) = 10^(gainhighpass); 
     
-
